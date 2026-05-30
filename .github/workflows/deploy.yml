@@ -32,7 +32,7 @@ jobs:
         env:
           NS_PRIVATE_KEY: ${{ secrets.NS_PRIVATE_KEY }}
         run: |
-          printf "%b" "$NS_PRIVATE_KEY" > private_key.pem
+          echo "$NS_PRIVATE_KEY" > private_key.pem
 
       - name: Verify Private Key
         run: |
