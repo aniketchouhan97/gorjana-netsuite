@@ -15,34 +15,38 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Authenticate, Validate, and Deploy (Token-Based via Docker)
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install SuiteCloud CLI
+        run: npm install -g @oracle/suitecloud-cli --acceptsuitecloudsdklicense
+
+      - name: Authenticate with NetSuite (M2M)
         env:
-          NS_ACCOUNT_ID: ${{ secrets.NS_ACCOUNT_ID }}
-          NS_TOKEN_ID: ${{ secrets.NS_TOKEN_ID }}
-          NS_TOKEN_SECRET: ${{ secrets.NS_TOKEN_SECRET }}
-          SUITECLOUD_CI_PASSKEY: ${{ secrets.SUITECLOUD_CI_PASSKEY }}
+          NS_CERTIFICATE_ID: ${{ secrets.NS_CERTIFICATE_ID }}
+          NS_PRIVATE_KEY: ${{ secrets.NS_PRIVATE_KEY }}
         run: |
-          # The latest SuiteCloud CLI does not support Token-Based Auth (TBA) in CI environments.
-          # We use an older CLI version via Docker (1.9.0) that still has the account:savetoken command.
-          # We pass SUITECLOUD_CI and SUITECLOUD_CI_PASSKEY to prevent the credential save error.
-          docker run --rm --entrypoint sh --user root \
-            -e HOME=/app \
-            -e SUITECLOUD_CI=1 \
-            -e SUITECLOUD_CI_PASSKEY="$SUITECLOUD_CI_PASSKEY" \
-            -e NS_ACCOUNT_ID="$NS_ACCOUNT_ID" \
-            -e NS_TOKEN_ID="$NS_TOKEN_ID" \
-            -e NS_TOKEN_SECRET="$NS_TOKEN_SECRET" \
-            -v ${{ github.workspace }}:/app -w /app skumail/suitecloud-cli:1.9.0-alpine -c "\
-            apk add --no-cache python3 make g++ && \
-            npm install --prefix /home/node/.npm-global/lib/node_modules/@oracle/suitecloud-cli --acceptsuitecloudsdklicense && \
-            export SUITECLOUD_CI_PASSKEY='$SUITECLOUD_CI_PASSKEY' && \
-            suitecloud account:savetoken \
-              --account \"$NS_ACCOUNT_ID\" \
-              --authid \"ci_auth\" \
-              --tokenid \"$NS_TOKEN_ID\" \
-              --tokensecret \"$NS_TOKEN_SECRET\" && \
-            suitecloud project:validate --authid ci_auth && \
-            suitecloud project:deploy \
-              --accountspecificvalues WARNING \
-              --applyinstallprefs \
-              --authid ci_auth"
+          # Write the private key to a file for the CLI to use
+          echo "$NS_PRIVATE_KEY" > private_key.pem
+          
+          # Use Machine-to-Machine (M2M) authentication
+          suitecloud account:setup:ci \
+            --authid "ci_auth" \
+            --account "${{ secrets.NS_ACCOUNT_ID }}" \
+            --certificateid "$NS_CERTIFICATE_ID" \
+            --privatekeypath "private_key.pem"
+            
+          # Clean up the private key
+          rm private_key.pem
+
+      - name: Validate Project
+        run: suitecloud project:validate --authid ci_auth
+
+      - name: Deploy to Sandbox
+        run: |
+          suitecloud project:deploy \
+            --accountspecificvalues WARNING \
+            --applyinstallprefs \
+            --authid ci_auth
