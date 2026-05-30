@@ -1,6 +1,6 @@
 # NetSuite GitHub Actions Deployment Guide
 
-This repository is configured to automatically deploy SuiteCloud projects to NetSuite using GitHub Actions and M2M (Machine-to-Machine) OAuth 2.0.
+This repository is configured to automatically deploy SuiteCloud projects to NetSuite using GitHub Actions and Token-Based Authentication (TBA).
 
 ## 1. Setting up GitHub Secrets
 
@@ -12,8 +12,18 @@ To allow GitHub to authenticate with your NetSuite account, you need to add the 
 | Secret Name | Description |
 | --- | --- |
 | `NS_ACCOUNT_ID` | Your NetSuite Account ID (e.g., `1234567_SB1` for sandbox, `1234567` for production). |
-| `NS_CERTIFICATE_ID` | The Certificate ID generated in NetSuite (this corresponds to the `KEY_ID` in your `clientId.js`). |
-| `NS_PRIVATE_KEY` | The full contents of your `private.pem` file. **Make sure to include `-----BEGIN RSA PRIVATE KEY-----` and the end tags!** |
+| `NS_TOKEN_ID` | The Token ID generated for your NetSuite user/role. |
+| `NS_TOKEN_SECRET` | The Token Secret generated for your NetSuite user/role. |
+
+> **How to get your `NS_TOKEN_ID` and `NS_TOKEN_SECRET` in NetSuite:**
+> 1. Log in to NetSuite with the Administrator role (or a role with SuiteCloud deployment permissions).
+> 2. Ensure **Token-Based Authentication** is enabled in your account: `Setup > Company > Enable Features > SuiteCloud > Manage Authentication`.
+> 3. Go to your **Home** dashboard and scroll down to the **Settings** portlet (usually bottom left).
+> 4. Click **Manage Access Tokens**.
+> 5. Click the **New My Access Token** button.
+> 6. In the Application dropdown, select **SuiteCloud Development Integration**.
+> 7. Click **Save**. 
+> 8. **CRITICAL:** NetSuite will display your **Token ID** and **Token Secret** at the bottom of the screen. *This is the ONLY time they will be shown.* Copy them immediately and paste them into your GitHub Secrets!
 
 ---
 
