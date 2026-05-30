@@ -26,7 +26,10 @@ jobs:
         run: |
           # Use an older SuiteCloud CLI (1.9.0) via Docker that still supports Token-Based Authentication (TBA).
           # The command account:savetoken is run first, immediately followed by project:deploy in the same container.
-          docker run --rm --entrypoint sh -v ${{ github.workspace }}:/app -w /app skumail/suitecloud-cli:1.9.0-alpine -c "\
+          docker run --rm --entrypoint sh \
+            -e SUITECLOUD_CI=1 \
+            -e SUITECLOUD_CI_PASSKEY="GitHubActionsPasskey1234567890123456" \
+            -v ${{ github.workspace }}:/app -w /app skumail/suitecloud-cli:1.9.0-alpine -c "\
             suitecloud account:savetoken \
               --account \"$NS_ACCOUNT_ID\" \
               --authid \"github_deploy\" \
