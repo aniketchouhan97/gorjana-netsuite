@@ -20,13 +20,14 @@ jobs:
           NS_ACCOUNT_ID: ${{ secrets.NS_ACCOUNT_ID }}
           NS_TOKEN_ID: ${{ secrets.NS_TOKEN_ID }}
           NS_TOKEN_SECRET: ${{ secrets.NS_TOKEN_SECRET }}
+          SUITECLOUD_CI_PASSKEY: ${{ secrets.SUITECLOUD_CI_PASSKEY }}
         run: |
           # The latest SuiteCloud CLI does not support Token-Based Auth (TBA) in CI environments.
           # We use an older CLI version via Docker (1.9.0) that still has the account:savetoken command.
           # We pass SUITECLOUD_CI and SUITECLOUD_CI_PASSKEY to prevent the credential save error.
           docker run --rm --entrypoint sh \
             -e SUITECLOUD_CI=1 \
-            -e SUITECLOUD_CI_PASSKEY="GitHubActionsPasskey1234567890123456" \
+            -e SUITECLOUD_CI_PASSKEY="$SUITECLOUD_CI_PASSKEY" \
             -v ${{ github.workspace }}:/app -w /app skumail/suitecloud-cli:1.9.0-alpine -c "\
             suitecloud account:savetoken \
               --account \"$NS_ACCOUNT_ID\" \
