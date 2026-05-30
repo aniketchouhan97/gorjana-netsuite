@@ -21,3 +21,10 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+
+#SuiteCloud
+private.pem
+public.pem
+clientId.js
+.env
+.env.example

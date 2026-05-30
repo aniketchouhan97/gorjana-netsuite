@@ -1,0 +1,52 @@
+<manifest projecttype="ACCOUNTCUSTOMIZATION">
+  <projectname>Krewe-oms</projectname>
+  <frameworkversion>1.0</frameworkversion>
+  <dependencies>
+    <features>
+      <feature required="true">SERVERSIDESCRIPTING</feature>
+      <feature required="true">SALESORDERS</feature>
+      <feature required="true">CUSTOMRECORDS</feature>
+      <feature required="false">MULTILANGUAGE</feature>
+      <feature required="false">EXTREMELIST</feature>
+      <feature required="true">INVENTORY</feature>
+      <feature required="false">MAILMERGE</feature>
+      <feature required="true">MULTILOCINVT</feature>
+      <feature required="false">ADVRECEIVING</feature>
+      <feature required="false">RECEIVABLES</feature>
+      <feature required="false">CRM</feature>
+      <feature required="false">MATRIXITEMS</feature>
+      <feature required="false">ACCOUNTING</feature>
+      <feature required="false">CREATESUITEBUNDLES</feature>
+    </features>
+    <objects>
+      <object>custform_131_4054670_927</object>
+      <object>custform_138_4054670_790</object>
+      <object>custbody_celigo_etail_order_id</object>
+      <object>custbody4</object>
+      <object>custcol_nm_shopify_has_giftwrap</object>
+      <object>custcol_nm_giftwarp_text</object>
+      <object>custtab_hc_tab</object>
+      <object>custcol_custoption_text1</object>
+      <object>custform_152_4054670_183</object>
+      <object>custform_hc_sales_order_form</object>
+      <object>custcol_nm_final_sale</object>
+      <object>custbody_hc_inventory_adj_number</object>
+      <object>custcol_hc_orderline_type_id</object>
+      <object>custbody_hc_order_id</object>
+      <object>custbody_gift_wrap_option</object>
+      <object>custcol_hc_item_tag</object>
+      <object>custentity_hc_customer_id</object>
+      <object>custentity1</object>
+      <object>custbody_hc_pos_exc_payment</object>
+      <object>custcol_hc_order_line_id</object>
+      <object>custbody_shopify_source_name</object>
+      <object>custbody_hc_shopify_order_id</object>
+      <object>custentity_hc_shop_cust_id</object>
+      <object>custform_154_4054670_452</object>
+      <object>custbody39</object>
+      <object>custbody_hc_inv_transfer_no</object>
+      <object>custcol_custoption_text1_font_family</object>
+      <object>custbody_hc_sales_channel</object>
+    </objects>
+  </dependencies>
+</manifest>
