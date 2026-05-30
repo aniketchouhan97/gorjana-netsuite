@@ -15,30 +15,26 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install SuiteCloud CLI
-        run: npm install -g @oracle/suitecloud-cli --acceptsuitecloudsdklicense
-
-      - name: Authenticate
+      - name: Authenticate, Validate, and Deploy (Token-Based via Docker)
+        env:
+          NS_ACCOUNT: ${{ secrets.NS_ACCOUNT }}
+          NS_TOKEN_ID: ${{ secrets.NS_TOKEN_ID }}
+          NS_TOKEN_SECRET: ${{ secrets.NS_TOKEN_SECRET }}
         run: |
-          suitecloud account:setup:ci \
-            --account ${{ secrets.NS_ACCOUNT }} \
-            --authid ci_auth \
-            --tokenid ${{ secrets.NS_TOKEN_ID }} \
-            --tokensecret ${{ secrets.NS_TOKEN_SECRET }} \
-            --consumerkey ${{ secrets.NS_CONSUMER_KEY }} \
-            --consumersecret ${{ secrets.NS_CONSUMER_SECRET }}
-
-      - name: Validate Project
-        run: suitecloud project:validate --authid ci_auth
-
-      - name: Deploy to Sandbox
-        run: |
-          suitecloud project:deploy \
-            --accountspecificvalues WARNING \
-            --applyinstallprefs \
-            --authid ci_auth
+          # The latest SuiteCloud CLI does not support Token-Based Auth (TBA) in CI environments.
+          # We use an older CLI version via Docker (1.9.0) that still has the account:savetoken command.
+          # We pass SUITECLOUD_CI and SUITECLOUD_CI_PASSKEY to prevent the credential save error.
+          docker run --rm --entrypoint sh \
+            -e SUITECLOUD_CI=1 \
+            -e SUITECLOUD_CI_PASSKEY="GitHubActionsPasskey1234567890123456" \
+            -v ${{ github.workspace }}:/app -w /app skumail/suitecloud-cli:1.9.0-alpine -c "\
+            suitecloud account:savetoken \
+              --account \"$NS_ACCOUNT\" \
+              --authid \"ci_auth\" \
+              --tokenid \"$NS_TOKEN_ID\" \
+              --tokensecret \"$NS_TOKEN_SECRET\" && \
+            suitecloud project:validate --authid ci_auth && \
+            suitecloud project:deploy \
+              --accountspecificvalues WARNING \
+              --applyinstallprefs \
+              --authid ci_auth"
