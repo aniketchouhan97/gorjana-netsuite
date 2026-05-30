@@ -18,24 +18,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install SuiteCloud CLI
-        run: npm install -g @oracle/suitecloud-cli --acceptsuitecloudsdklicense
-
-      - name: Authenticate with NetSuite (Token-Based)
+      - name: Authenticate and Deploy with NetSuite (Token-Based)
         env:
+          NS_ACCOUNT_ID: ${{ secrets.NS_ACCOUNT_ID }}
           NS_TOKEN_ID: ${{ secrets.NS_TOKEN_ID }}
           NS_TOKEN_SECRET: ${{ secrets.NS_TOKEN_SECRET }}
         run: |
-          suitecloud account:setup:ci \
-            --authid "github_deploy" \
-            --account "${{ secrets.NS_ACCOUNT_ID }}" \
-            --tokenid "$NS_TOKEN_ID" \
-            --tokensecret "$NS_TOKEN_SECRET"
-
-      - name: Deploy SuiteCloud Project
-        run: suitecloud project:deploy --accountspecificvalues WARNING --logfcconflicts
+          # Use an older SuiteCloud CLI (1.9.0) via Docker that still supports Token-Based Authentication (TBA).
+          # The command account:savetoken is run first, immediately followed by project:deploy in the same container.
+          docker run --rm -v ${{ github.workspace }}:/app -w /app skumail/suitecloud-cli:1.9.0-alpine sh -c "\
+            suitecloud account:savetoken \
+              --account \"$NS_ACCOUNT_ID\" \
+              --authid \"github_deploy\" \
+              --tokenid \"$NS_TOKEN_ID\" \
+              --tokensecret \"$NS_TOKEN_SECRET\" && \
+            suitecloud project:deploy --accountspecificvalues WARNING --logfcconflicts"
