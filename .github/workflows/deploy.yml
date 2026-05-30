@@ -1,0 +1,41 @@
+name: Deploy to NetSuite
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install SuiteCloud CLI
+        run: npm install -g @oracle/suitecloud-cli
+
+      - name: Setup NetSuite Private Key
+        run: |
+          echo "${{ secrets.NS_PRIVATE_KEY }}" > private.pem
+          chmod 600 private.pem
+
+      - name: Authenticate with NetSuite (M2M OAuth 2.0)
+        run: |
+          suitecloud account:setup:ci \
+            --authid "github_deploy" \
+            --account "${{ secrets.NS_ACCOUNT_ID }}" \
+            --certificateid "${{ secrets.NS_CERTIFICATE_ID }}" \
+            --privatekeypath "private.pem"
+
+      - name: Deploy SuiteCloud Project
+        run: suitecloud project:deploy --accountspecificvalues WARNING --logfcconflicts

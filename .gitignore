@@ -23,7 +23,7 @@ rad.json
 TestResults.xml
 
 #SuiteCloud
-private.pem
+# private.pem
 public.pem
 clientId.js
 .env
