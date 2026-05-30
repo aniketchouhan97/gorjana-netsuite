@@ -28,3 +28,5 @@ public.pem
 clientId.js
 .env
 .env.example
+node_modules
+Test.js
