@@ -37,8 +37,7 @@ jobs:
       - name: Verify Private Key
         run: |
           echo "Checking private key..."
-          head -1 private_key.pem
-          tail -1 private_key.pem
+          cat private_key.pem
           openssl pkey -in private_key.pem -check -noout
 
       - name: Authenticate with NetSuite
