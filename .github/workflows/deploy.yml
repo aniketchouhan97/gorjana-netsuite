@@ -33,7 +33,7 @@ jobs:
             -e NS_TOKEN_ID="$NS_TOKEN_ID" \
             -e NS_TOKEN_SECRET="$NS_TOKEN_SECRET" \
             -v ${{ github.workspace }}:/app -w /app skumail/suitecloud-cli:1.9.0-alpine -c "\
-            npm install && \
+            npm install --prefix /home/node/.npm-global/lib/node_modules/@oracle/suitecloud-cli && \
             export SUITECLOUD_CI_PASSKEY='$SUITECLOUD_CI_PASSKEY' && \
             suitecloud account:savetoken \
               --account \"$NS_ACCOUNT_ID\" \
