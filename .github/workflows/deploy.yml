@@ -25,7 +25,7 @@ jobs:
           # The latest SuiteCloud CLI does not support Token-Based Auth (TBA) in CI environments.
           # We use an older CLI version via Docker (1.9.0) that still has the account:savetoken command.
           # We pass SUITECLOUD_CI and SUITECLOUD_CI_PASSKEY to prevent the credential save error.
-          docker run --rm --entrypoint sh \
+          docker run --rm --entrypoint sh --user root \
             -e HOME=/app \
             -e SUITECLOUD_CI=1 \
             -e SUITECLOUD_CI_PASSKEY="$SUITECLOUD_CI_PASSKEY" \
