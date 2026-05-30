@@ -17,7 +17,7 @@ jobs:
 
       - name: Authenticate, Validate, and Deploy (Token-Based via Docker)
         env:
-          NS_ACCOUNT: ${{ secrets.NS_ACCOUNT }}
+          NS_ACCOUNT_ID: ${{ secrets.NS_ACCOUNT_ID }}
           NS_TOKEN_ID: ${{ secrets.NS_TOKEN_ID }}
           NS_TOKEN_SECRET: ${{ secrets.NS_TOKEN_SECRET }}
         run: |
@@ -29,7 +29,7 @@ jobs:
             -e SUITECLOUD_CI_PASSKEY="GitHubActionsPasskey1234567890123456" \
             -v ${{ github.workspace }}:/app -w /app skumail/suitecloud-cli:1.9.0-alpine -c "\
             suitecloud account:savetoken \
-              --account \"$NS_ACCOUNT\" \
+              --account \"$NS_ACCOUNT_ID\" \
               --authid \"ci_auth\" \
               --tokenid \"$NS_TOKEN_ID\" \
               --tokensecret \"$NS_TOKEN_SECRET\" && \
