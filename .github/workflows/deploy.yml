@@ -26,20 +26,16 @@ jobs:
       - name: Install SuiteCloud CLI
         run: npm install -g @oracle/suitecloud-cli --acceptsuitecloudsdklicense
 
-      - name: Setup NetSuite Private Key
+      - name: Authenticate with NetSuite (Token-Based)
         env:
-          PRIVATE_KEY: ${{ secrets.NS_PRIVATE_KEY }}
-        run: |
-          echo "$PRIVATE_KEY" > private.pem
-          chmod 600 private.pem
-
-      - name: Authenticate with NetSuite (M2M OAuth 2.0)
+          NS_TOKEN_ID: ${{ secrets.NS_TOKEN_ID }}
+          NS_TOKEN_SECRET: ${{ secrets.NS_TOKEN_SECRET }}
         run: |
           suitecloud account:setup:ci \
             --authid "github_deploy" \
             --account "${{ secrets.NS_ACCOUNT_ID }}" \
-            --certificateid "${{ secrets.NS_CERTIFICATE_ID }}" \
-            --privatekeypath "private.pem"
+            --tokenid "$NS_TOKEN_ID" \
+            --tokensecret "$NS_TOKEN_SECRET"
 
       - name: Deploy SuiteCloud Project
         run: suitecloud project:deploy --accountspecificvalues WARNING --logfcconflicts
