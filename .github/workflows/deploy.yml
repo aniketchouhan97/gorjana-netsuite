@@ -32,7 +32,7 @@ jobs:
           NS_PRIVATE_KEY: ${{ secrets.NS_PRIVATE_KEY }}
         run: |
           # Write the private key to a file for the CLI to use
-          echo "$NS_PRIVATE_KEY" > private_key.pem
+          printf '%s\n' "$NS_PRIVATE_KEY" > private_key.pem
           
           # Use Machine-to-Machine (M2M) authentication
           suitecloud account:setup:ci \
